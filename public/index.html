@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cheomil | Good food, already at home</title>
+  <link rel="icon" type="image/jpeg" href="/panda-chef.jpg">
+  <script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+  </style>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Cheomil home"><img class="brand-mark" src="/panda-chef.jpg" alt="" width="36" height="36"><span>Cheomil</span></a>
+    <div class="topbar-right"><span class="local-badge"><span class="status-dot"></span>Local ingredients. Local AI.</span><button id="theme-toggle" class="icon-button" aria-label="Switch color theme" title="Switch color theme">Light / dark</button></div>
+  </header>
+  <main class="workspace">
+    <aside class="pantry-panel" aria-labelledby="pantry-heading">
+      <div class="section-label">THE STARTING INGREDIENT</div>
+      <div class="panel-heading"><h1 id="pantry-heading">Your pantry</h1><span id="pantry-count" class="count">0</span></div>
+      <p class="muted pantry-intro">A little less guessing.<br>A little more using what you have.</p>
+      <div class="pantry-summary"><span id="pantry-summary">Your kitchen, ready to fill.</span><span class="tiny">Saved on this device</span></div>
+      <div id="inventory" class="inventory-list" role="region" aria-label="Ingredients" tabindex="0" aria-live="polite"></div>
+      <section class="add-section">
+        <h2>Add something fresh</h2>
+        <form id="ingredient-form">
+          <label for="ingredient-name">Ingredient</label>
+          <input id="ingredient-name" name="name" placeholder="e.g. rice, tomatoes, eggs" maxlength="80" required autocomplete="off">
+          <div class="quantity-fields">
+            <div><label for="ingredient-quantity">Quantity</label><input id="ingredient-quantity" name="quantity" type="number" min="0.001" max="1000000" step="0.001" placeholder="500" required></div>
+            <div><label for="ingredient-unit">Unit</label><select id="ingredient-unit" name="unit"><option value="g">Grams (g)</option><option value="ml">Millilitres (ml)</option><option value="pcs">Pieces</option></select></div>
+          </div>
+          <button type="submit" class="button primary wide">+ Add to pantry</button>
+        </form>
+      </section>
+    </aside>
+    <section class="conversation-panel" aria-labelledby="conversation-heading">
+      <div class="conversation-top"><span class="section-label">FROM PANTRY TO PLATE</span><div class="conversation-controls"><button id="ai-status" class="ai-status" title="Check local AI connection">Checking local AI...</button><button id="new-chat" class="icon-button" title="Clear chat memory and reviews. Keep your pantry.">New chat</button></div></div>
+      <div id="chat-scroll" class="chat-scroll" role="region" aria-label="Conversation" tabindex="0">
+        <div id="welcome" class="welcome">
+          <div class="welcome-art" aria-hidden="true"><span class="plate"><span class="plate-inner">Made<br>with what<br>you have.</span></span><span class="art-note">less waste,<br>more possibility</span></div>
+          <div class="section-label">YOUR EVERYDAY COOKING COMPANION</div>
+          <h2 id="conversation-heading">Good food.<br>Already at home.</h2>
+          <p>Tell me what's in your kitchen.<br>Let's turn it into something worth sitting down for.</p>
+          <div class="welcome-steps"><span><b>1</b> Stock your pantry</span><span><b>2</b> Find your next meal</span><span><b>3</b> Cook, review, repeat</span></div>
+        </div>
+        <div id="messages" class="messages" aria-live="polite" aria-relevant="additions"></div>
+        <div id="thinking" class="thinking" hidden><span class="spinner"></span><div><strong>Your local model is thinking</strong><span>Checking your pantry and putting a meal together. CPU inference may take a minute or two.</span></div></div>
+      </div>
+      <div class="composer-area">
+        <div class="prompt-chips">
+          <button class="chip" data-prompt="What can I make for lunch? Suggest simple meals for one person.">What's for lunch?</button>
+          <button class="chip" data-prompt="Suggest a quick dinner using only my pantry ingredients.">A quick dinner</button>
+          <button class="chip" data-prompt="What can I make for breakfast using my pantry ingredients?">Breakfast ideas</button>
+        </div>
+        <form id="chat-form" class="composer">
+          <label class="sr-only" for="chat-input">Ask about meals or update your pantry</label>
+          <textarea id="chat-input" rows="2" maxlength="2000" placeholder="What's for lunch? Or: I bought 500 g rice and 6 eggs." required></textarea>
+          <button id="send-button" class="send-button" type="submit" aria-label="Send message">Send <span aria-hidden="true">&rarr;</span></button>
+        </form>
+        <p class="tiny safety-note">AI recipes are suggestions, not dietary advice. Check allergies, ingredient quality, and safe cooking temperatures.</p>
+      </div>
+    </section>
+  </main>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <dialog id="edit-dialog">
+    <form id="edit-form">
+      <div class="panel-heading"><h2>Edit pantry item</h2><button type="button" id="close-edit" class="icon-button" aria-label="Close editor">Close</button></div>
+      <input type="hidden" name="id">
+      <label for="edit-name">Ingredient</label><input id="edit-name" name="name" maxlength="80" required>
+      <div class="quantity-fields"><div><label for="edit-quantity">Quantity remaining</label><input id="edit-quantity" name="quantity" type="number" min="0.001" max="1000000" step="0.001" required></div><div><label for="edit-unit">Unit</label><select id="edit-unit" name="unit"><option value="g">Grams (g)</option><option value="ml">Millilitres (ml)</option><option value="pcs">Pieces</option></select></div></div>
+      <p class="tiny">This sets the amount remaining; it does not add to it. Changing units does not convert the number.</p>
+      <button class="button primary wide" type="submit">Save changes</button>
+    </form>
+  </dialog>
+</body>
+</html>
